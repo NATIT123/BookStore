@@ -1,0 +1,138 @@
+import { Permission } from 'src/permissions/schemas/permission.schema';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateRoleDto } from './dto/create-Role.dto';
+import { UpdateRoleDto } from './dto/update-Role.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Role, RoleDocument } from './schemas/Role.schema';
+import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { IUser } from 'src/users/users.interface';
+import aqp from 'api-query-params';
+import mongoose from 'mongoose';
+
+@Injectable()
+export class RolesService {
+  constructor(
+    @InjectModel(Role.name)
+    private roleModel: SoftDeleteModel<RoleDocument>,
+  ) {}
+  async create(createRoleDto: CreateRoleDto, user: IUser) {
+    const { name, description, isActive, permissions } = createRoleDto;
+    const isExist = await this.roleModel.findOne({ name });
+    if (isExist) {
+      throw new BadRequestException(`Role with name= ${name} is exist`);
+    }
+    let newRole = await this.roleModel.create({
+      name,
+      description,
+      isActive,
+      permissions,
+      createdBy: {
+        _id: user._id,
+        email: user.email,
+      },
+    });
+    return {
+      _id: newRole?._id,
+      createdAt: newRole?.createdAt,
+    };
+  }
+
+  async findAll(currentPage: number, limit: number, qs: string) {
+    const { filter, sort, projection, population } = aqp(qs);
+    delete filter.current;
+    delete filter.pageSize;
+    filter.isDeleted = false;
+    let offset = (+currentPage - 1) * +limit;
+    let defaultLimit = +limit ? +limit : 10;
+    const totalItems = (await this.roleModel.find(filter)).length;
+    const totalPages = Math.ceil(totalItems / defaultLimit);
+
+    const result = await this.roleModel
+      .find(filter)
+      .skip(offset)
+      .limit(defaultLimit)
+      .sort(sort as any)
+      .populate(population)
+      .select(projection)
+      .exec();
+
+    return {
+      meta: {
+        current: currentPage, //trang hiện tại
+        pageSize: limit, //số lượng bản ghi đã lấy
+        pages: totalPages, //tổng số trang với điều kiện query
+        total: totalItems, // tổng số phần tử (số bản ghi)
+      },
+      result: result,
+    };
+  }
+
+  async findOne(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Id is not valid');
+    }
+    let role = await this.roleModel.findById(id).populate({
+      path: 'permissions',
+      select: { _id: 1, apiPath: 1, name: 1, method: 1, module: 1 },
+    });
+    if (!role) {
+      throw new NotFoundException('Role is not valid');
+    }
+    return role;
+  }
+
+  async update(id: string, updateRoleDto: UpdateRoleDto, user: IUser) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Id is not valid');
+    }
+    let role = await this.roleModel.findById(id);
+    if (!role) {
+      throw new NotFoundException('Role is not found');
+    }
+
+    try {
+      await this.roleModel.updateOne(
+        { _id: id },
+        {
+          ...updateRoleDto,
+          updatedBy: {
+            _id: user._id,
+            email: user.email,
+          },
+        },
+      );
+    } catch (err) {
+      return err;
+    }
+    return { message: true };
+  }
+
+  async remove(id: string, user: IUser) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return { message: 'Id is not valid' };
+    }
+    const roleFind = await this.roleModel.findById(id);
+    if (roleFind || roleFind.name === 'Admin') {
+      throw new BadRequestException('Can not delete role admin');
+    }
+    try {
+      await this.roleModel.updateOne(
+        { _id: id },
+        {
+          deletedBy: {
+            _id: user._id,
+            email: user.email,
+          },
+        },
+      );
+
+      return this.roleModel.softDelete({ _id: id });
+    } catch (err) {
+      return { message: err };
+    }
+  }
+}
