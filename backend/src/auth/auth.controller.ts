@@ -23,9 +23,8 @@ export class AuthController {
 
   @ResponseMessage('Login')
   @Public()
-  @Throttle(5, 60)
-  @UseGuards(ThrottlerGuard)
-  @UseGuards(LocalAuthGuard)
+  @Throttle({ default: { limit: 5, ttl: 60 } })
+  @UseGuards(ThrottlerGuard, LocalAuthGuard)
   @ApiBody({ type: UserLoginDto })
   @Post('/login')
   //passthrough: true using when assign cookie to response before return response

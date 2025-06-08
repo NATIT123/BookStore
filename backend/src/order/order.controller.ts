@@ -1,8 +1,8 @@
-import { Controller, Post, Body, Req, Get, Query } from "@nestjs/common";
-import { OrderService } from "./order.service";
-import { CreateOrderDto } from "./dto/create-order.dto";
+import { Controller, Post, Body, Req, Get, Query } from '@nestjs/common';
+import { OrderService } from './order.service';
+import { CreateOrderDto } from './dto/create-order.dto';
 
-@Controller("order")
+@Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
@@ -14,8 +14,8 @@ export class OrderController {
   @Get()
   async findAll(
     @Query() current: string,
-    @Query("pageSize") pageSize: string,
-    @Query("user") user: string
+    @Query('pageSize') pageSize: string,
+    @Query('user') user: string,
   ) {
     return this.orderService.findAll(current, pageSize, user);
   }

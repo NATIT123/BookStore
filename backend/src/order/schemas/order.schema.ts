@@ -1,5 +1,5 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
 @Schema()
 export class Order extends Document {
@@ -12,7 +12,7 @@ export class Order extends Document {
   @Prop()
   address!: string;
 
-  @Prop({ default: "COD" }) // Hình thức thanh toán (Cash On Delivery mặc định)
+  @Prop({ default: 'COD' }) // Hình thức thanh toán (Cash On Delivery mặc định)
   type!: string;
 
   @Prop()

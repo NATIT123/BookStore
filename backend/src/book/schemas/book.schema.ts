@@ -1,8 +1,8 @@
 // src/book/schemas/book.schema.ts (hoặc đường dẫn tương ứng)
 
 // Import các thành phần cần thiết từ Mongoose và @nestjs/mongoose
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
 // Định nghĩa kiểu dữ liệu cho Document của Book (bao gồm cả thuộc tính của Mongoose Document)
 export type BookDocument = Book & Document;
@@ -53,8 +53,8 @@ export class Book {
 // Tạo Mongoose Schema từ lớp Book
 // Thêm tùy chọn timestamps: true để Mongoose tự động quản lý createdAt và updatedAt
 export const BookSchema = SchemaFactory.createForClass(Book).set(
-  "timestamps",
-  true
+  'timestamps',
+  true,
 );
 
 // Export cả lớp Book (để dùng trong InjectModel) và BookSchema

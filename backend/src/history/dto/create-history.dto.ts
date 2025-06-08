@@ -1,8 +1,8 @@
-import { ObjectType } from "@nestjs/graphql";
-import { Field } from "@nestjs/graphql";
+import { ObjectType } from '@nestjs/graphql';
+import { Field } from '@nestjs/graphql';
 
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
 // Định nghĩa DTO và Schema cho NestJS
 @ObjectType()

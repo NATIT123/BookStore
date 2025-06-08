@@ -10,15 +10,15 @@ import {
   Body,
   Param,
   Query,
-} from "@nestjs/common";
-import { BookService } from "./book.service"; // Import BookService
-import { CreateBookDto } from "./dto/create-book.dto"; // Import CreateBookDto
-import { UpdateBookDto } from "./dto/update-book.dto"; // Import UpdateBookDto
-import { Public } from "../auth/public.decorator";
+} from '@nestjs/common';
+import { BookService } from './book.service'; // Import BookService
+import { CreateBookDto } from './dto/create-book.dto'; // Import CreateBookDto
+import { UpdateBookDto } from './dto/update-book.dto'; // Import UpdateBookDto
+import { Public } from "../decorator/customize";
 
 
 // Sử dụng decorator @Controller để định nghĩa BookController với base route 'book'
-@Controller("book")
+@Controller('book')
 export class BookController {
   // Inject BookService vào constructor
   constructor(private readonly bookService: BookService) {}
@@ -35,8 +35,8 @@ export class BookController {
   @Get()
   async findAll(
     @Query() query: any, // Lấy toàn bộ query object
-    @Query("current") currentPage?: string, // Lấy query param 'current' (tùy chọn)
-    @Query("pageSize") limit?: string // Lấy query param 'pageSize' (tùy chọn)
+    @Query('current') currentPage?: string, // Lấy query param 'current' (tùy chọn)
+    @Query('pageSize') limit?: string, // Lấy query param 'pageSize' (tùy chọn)
   ) {
     return this.bookService.findAll(query, currentPage, limit);
   }
@@ -44,8 +44,8 @@ export class BookController {
   // Endpoint GET /book/:id
   // Đánh dấu Public vì không yêu cầu xác thực
   @Public()
-  @Get(":id")
-  findOne(@Param("id") id: string) {
+  @Get(':id')
+  findOne(@Param('id') id: string) {
     return this.bookService.findOne(id);
   }
 

@@ -1,13 +1,13 @@
 // src/book/book.service.ts (hoặc đường dẫn tương ứng)
 
 // Import các thành phần cần thiết từ NestJS common module, Mongoose và các file nội bộ
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import aqp from "api-query-params"; // api-query-params là một thư viện JS, import như thế này
-import { CreateBookDto } from "./dto/create-book.dto"; // Cần tạo DTO này
-import { UpdateBookDto } from "./dto/update-book.dto"; // Cần tạo DTO này
-import { Book, BookDocument } from "./schemas/book.schema"; // Cần định nghĩa Schema/Document Book
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import aqp from 'api-query-params'; // api-query-params là một thư viện JS, import như thế này
+import { CreateBookDto } from './dto/create-book.dto'; // Cần tạo DTO này
+import { UpdateBookDto } from './dto/update-book.dto'; // Cần tạo DTO này
+import { Book, BookDocument } from './schemas/book.schema'; // Cần định nghĩa Schema/Document Book
 
 // Định nghĩa interface cho metadata phân trang
 interface PaginationMeta {
@@ -54,7 +54,7 @@ export class BookService {
   async findAll(
     query: any,
     currentPage?: string,
-    limit?: string
+    limit?: string,
   ): Promise<PaginatedResult<BookDocument> | BookDocument[]> {
     if (currentPage && limit) {
       // Chế độ phân trang
@@ -100,7 +100,7 @@ export class BookService {
       return foundBook;
     }
     throw new BadRequestException(
-      `Book với id = ${id} không tồn tại trên hệ thống.`
+      `Book với id = ${id} không tồn tại trên hệ thống.`,
     );
   }
 
@@ -120,11 +120,11 @@ export class BookService {
         {
           ...updateBookDto,
           updatedAt: new Date(),
-        }
+        },
       );
     }
     throw new BadRequestException(
-      `Book với id = ${id} không tồn tại trên hệ thống.`
+      `Book với id = ${id} không tồn tại trên hệ thống.`,
     );
   }
 
@@ -141,7 +141,7 @@ export class BookService {
       return this.model.deleteOne({ _id: id });
     }
     throw new BadRequestException(
-      `Book với id = ${id} không tồn tại trên hệ thống.`
+      `Book với id = ${id} không tồn tại trên hệ thống.`,
     );
   }
 
@@ -155,19 +155,19 @@ export class BookService {
    */
   async updateImageBook(
     id: string,
-    type: "thumbnail" | "slider",
-    fileName: string
+    type: 'thumbnail' | 'slider',
+    fileName: string,
   ): Promise<any> {
     const foundBook = await this.model.findById(id);
     if (foundBook) {
-      if (type === "slider") {
+      if (type === 'slider') {
         // Thêm ảnh vào mảng slider
         return this.model.updateOne(
           { _id: id },
           {
             slider: [...foundBook.slider, fileName],
             updatedAt: new Date(),
-          }
+          },
         );
       } else {
         // Cập nhật ảnh thumbnail
@@ -176,12 +176,12 @@ export class BookService {
           {
             thumbnail: fileName,
             updatedAt: new Date(),
-          }
+          },
         );
       }
     }
     throw new BadRequestException(
-      `Book với id = ${id} không tồn tại trên hệ thống.`
+      `Book với id = ${id} không tồn tại trên hệ thống.`,
     );
   }
 
@@ -196,32 +196,32 @@ export class BookService {
   async deleteAnImage(
     id: string,
     imagePath: string,
-    type: "thumbnail" | "slider"
+    type: 'thumbnail' | 'slider',
   ): Promise<any> {
     const foundBook = await this.model.findById(id);
     if (foundBook) {
-      if (type === "slider") {
+      if (type === 'slider') {
         // Lọc bỏ ảnh khỏi mảng slider
         return this.model.updateOne(
           { _id: id },
           {
             slider: foundBook.slider.filter((img) => img !== imagePath),
             updatedAt: new Date(),
-          }
+          },
         );
       } else {
         // Xóa ảnh thumbnail (đặt thành rỗng)
         return this.model.updateOne(
           { _id: id },
           {
-            thumbnail: "",
+            thumbnail: '',
             updatedAt: new Date(),
-          }
+          },
         );
       }
     }
     throw new BadRequestException(
-      `Book với id = ${id} không tồn tại trên hệ thống.`
+      `Book với id = ${id} không tồn tại trên hệ thống.`,
     );
   }
 }

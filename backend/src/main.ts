@@ -12,7 +12,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
-
+  app.use(cookieParser());
   //Reflector using for metadata assign for route
   const reflector = app.get(Reflector);
   //Global Guard handle JWT
@@ -45,7 +45,7 @@ async function bootstrap() {
   });
 
   //config versioning
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api/v1/', { exclude: ['/'] });
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: ['1', '2'],

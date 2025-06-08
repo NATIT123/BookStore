@@ -1,18 +1,18 @@
-import apiQueryParams from "api-query-params";
+import apiQueryParams from 'api-query-params';
 
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
-import { Book, BookDocument } from "../book/schemas/book.schema";
-import { Order, OrderDocument } from "./schemas/order.schema";
-import { History, HistoryDocument } from "../history/schemas/history.schema";
+import { Book, BookDocument } from '../book/schemas/book.schema';
+import { Order, OrderDocument } from './schemas/order.schema';
+import { History, HistoryDocument } from '../history/schemas/history.schema';
 @Injectable()
 export class OrderService {
   constructor(
     @InjectModel(Order.name) private modelOrder: Model<OrderDocument>,
     @InjectModel(Book.name) private modelBook: Model<BookDocument>,
-    @InjectModel(History.name) private modelHistory: Model<HistoryDocument>
+    @InjectModel(History.name) private modelHistory: Model<HistoryDocument>,
   ) {}
 
   // Tạo đơn hàng mới
@@ -25,7 +25,7 @@ export class OrderService {
 
     if (books.length > 0 && books.length === ids.length) {
       let hasError = false;
-      let errorMsg = "";
+      let errorMsg = '';
       let totalPrice = 0;
 
       // Kiểm tra tồn kho và tính tổng tiền
@@ -82,7 +82,7 @@ export class OrderService {
       return "transaction's created success";
     }
 
-    throw new BadRequestException("Books trong order không tồn tại");
+    throw new BadRequestException('Books trong order không tồn tại');
   }
 
   // Tìm tất cả đơn hàng có phân trang, lọc, sắp xếp, populate
@@ -117,6 +117,6 @@ export class OrderService {
 
   // Xóa đơn hàng (chưa xử lý logic, chỉ trả về 'ok')
   async remove(id: string, user?: any) {
-    return "ok";
+    return 'ok';
   }
 }

@@ -1,54 +1,39 @@
-# React + TypeScript + Vite
+# React Vite (React Test Fresher - FINAL PROJECT)
+Đây là source code final của series React Test Fresher của tác giả Hỏi Dân IT (Eric)
+- React 18
+- React Router 6
+- Redux Tookit
+- Vite 4
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Môi trường chạy dự án: Node.js v16.13.1
+https://nodejs.org/download/release/v16.13.1/
 
-Currently, two official plugins are available:
+## Về tác giả
+Mọi thông tin về Tác giả Hỏi Dân IT, các bạn có thể tìm kiếm tại đây:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Website chính thức: https://hoidanit.vn/
 
-## Expanding the ESLint configuration
+Youtube “Hỏi Dân IT” : https://www.youtube.com/@hoidanit
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Tiktok “Hỏi Dân IT” :  https://www.tiktok.com/@hoidanit
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+Fanpage “Hỏi Dân IT” : https://www.facebook.com/askITwithERIC/
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Udemy Hỏi Dân IT: https://www.udemy.com/user/eric-7039/
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+===
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+Các bước cài đặt: (chế độ development)
+1. clone code
+2. cài đặt thư viện: npm i --legacy-peer-deps
+3. Update file .env.development (nếu cần thiết)
+4. Chạy dự án: npm run dev
+
+===
+
+Cách chạy tại chế độ production:
+1. clone code
+2. cài đặt thư viện: npm i --legacy-peer-deps
+3. Update file .env.production (nếu cần thiết)
+4. Build dự án: npm run build
+5. Chạy dự án: npm run preview
