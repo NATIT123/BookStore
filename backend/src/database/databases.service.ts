@@ -124,6 +124,9 @@ export class DatabasesService implements OnModuleInit {
           {
             name: "I'm admin",
             email: 'admin@gmail.com',
+            phone: '123456789',
+            isActive: true,
+            avatar: '21232f297a57a5a743894a0e4a801fc3.png',
             password: this.userService.getHashPassword(
               this.configService.get<string>('INIT_PASSWORD'),
             ),
@@ -135,9 +138,12 @@ export class DatabasesService implements OnModuleInit {
           {
             name: "I'm Hỏi Dân IT",
             email: 'hoidanit@gmail.com',
+            phone: '123456789',
             password: this.userService.getHashPassword(
               this.configService.get<string>('INIT_PASSWORD'),
             ),
+            isActive: true,
+            avatar: 'ee11cbb19052e40b07aac0ca060c23ee.png',
             age: 96,
             gender: 'MALE',
             address: 'VietNam',
@@ -145,10 +151,13 @@ export class DatabasesService implements OnModuleInit {
           },
           {
             name: "I'm normal user",
+            phone: '123456789',
             email: 'user@gmail.com',
             password: this.userService.getHashPassword(
               this.configService.get<string>('INIT_PASSWORD'),
             ),
+            avatar: '21232f297a57a5a743894a0e4a801fc3.png',
+            isActive: true,
             age: 69,
             gender: 'MALE',
             address: 'VietNam',

@@ -5,7 +5,7 @@ import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { IUser } from 'src/users/users.interface';
 import { Response } from 'express';
-import ms from 'ms';
+import * as ms from 'ms';
 @Injectable()
 export class AuthService {
   constructor(
@@ -25,11 +25,12 @@ export class AuthService {
       if (isValid) {
         const returnUser = await user.populate({
           path: 'role',
-          select: { _id: 1, name: 1, permissions: 1 },
+          select: { _id: 1, name: 1, permissions: 1, avatar: 1, phone: 1 },
           populate: [
             { path: 'permissions', select: { method: 1, apiPath: 1 } },
           ],
         });
+        console.log(returnUser);
         return returnUser;
       }
     }
@@ -37,7 +38,7 @@ export class AuthService {
   }
 
   async login(user: IUser, response: Response) {
-    const { _id, name, email, role } = user;
+    const { _id, name, email, role, avatar } = user;
     const payload = {
       sub: 'token login',
       iss: 'from server',
@@ -45,6 +46,7 @@ export class AuthService {
       name,
       email,
       role,
+      avatar,
     };
     const refreshToken = this.createRefreshToken(payload);
 
@@ -64,6 +66,7 @@ export class AuthService {
         name,
         email,
         role,
+        avatar,
       },
     };
   }

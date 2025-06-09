@@ -56,7 +56,7 @@ const Header = (props) => {
       key: "logout",
     },
   ];
-  if (user?.role === "ADMIN") {
+  if (user?.role.name === "SUPER_ADMIN") {
     items.unshift({
       label: <Link to="/admin">Trang quản trị</Link>,
       key: "admin",
@@ -118,7 +118,7 @@ const Header = (props) => {
                 <span onClick={() => navigate("/")}>
                   {" "}
                   <FaReact className="rotate icon-react" />
-                  Hỏi Dân !T
+                  Book Store
                 </span>
 
                 <VscSearchFuzzy className="icon-search" />
@@ -143,10 +143,25 @@ const Header = (props) => {
                   content={contentPopover}
                   arrow={true}
                 >
-                  <Badge count={carts?.length ?? 0} size="small" showZero>
+                  <Badge count={carts?.length ?? 0} size={"small"} showZero>
                     <FiShoppingCart className="icon-cart" />
                   </Badge>
                 </Popover>
+              </li>
+              <li className="navigation__item mobile">
+                <Divider type="vertical" />
+              </li>
+              <li className="navigation__item mobile">
+                {!isAuthenticated ? (
+                  <span onClick={() => navigate("/login")}> Tài Khoản</span>
+                ) : (
+                  <Dropdown menu={{ items }} trigger={["click"]}>
+                    <Space>
+                      <Avatar src={urlAvatar} />
+                      {user?.name}
+                    </Space>
+                  </Dropdown>
+                )}
               </li>
             </ul>
           </nav>

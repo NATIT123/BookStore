@@ -124,7 +124,7 @@ const UserInfo = (props) => {
               labelCol={{ span: 24 }}
               label="Tên hiển thị"
               name="fullName"
-              initialValue={user?.fullName}
+              initialValue={user?.name}
               rules={[
                 {
                   required: true,

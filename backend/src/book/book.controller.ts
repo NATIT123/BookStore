@@ -35,7 +35,7 @@ export class BookController {
   async findAll(
     @Query() query: any, // Lấy toàn bộ query object
     @Query('current') currentPage?: string, // Lấy query param 'current' (tùy chọn)
-    @Query('pageSize') limit?: string, // Lấy query param 'pageSize' (tùy chọn)
+    @Query('limit') limit?: string, // Lấy query param 'pageSize' (tùy chọn)
   ) {
     return this.bookService.findAll(query, currentPage, limit);
   }

@@ -25,19 +25,19 @@ export class User {
   name: string;
 
   @Prop()
+  isActive: boolean;
+
+  @Prop()
   age: number;
+
+  @Prop()
+  avatar: string;
 
   @Prop()
   gender: string;
 
   @Prop()
   address: string;
-
-  @Prop({ type: Object })
-  company: {
-    _id: mongoose.Schema.Types.ObjectId;
-    name: string;
-  };
 
   @Prop({ type: Object })
   createdBy: {

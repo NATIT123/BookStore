@@ -1,11 +1,11 @@
-import './footer.scss';
+import "./footer.scss";
 
 const Footer = () => {
-    return (
-        <footer>
-            <div>Khóa Học React Test Fresher &copy; by Hỏi Dân IT</div>
-        </footer>
-    )
-}
+  return (
+    <footer>
+      <div>Footer &copy; Copy</div>
+    </footer>
+  );
+};
 
 export default Footer;

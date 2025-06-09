@@ -58,9 +58,11 @@ export class BookService {
   ): Promise<PaginatedResult<BookDocument> | BookDocument[]> {
     if (currentPage && limit) {
       // Chế độ phân trang
-      const { filter, sort, projection, population } = aqp(query);
+      const { current, limit, ...restQuery } = query;
 
-      const skip = (+currentPage - 1) * +limit;
+      const { filter, sort, population } = aqp(restQuery);
+
+      const skip = (+current - 1) * +limit;
       const pageSize = +limit || 10; // Mặc định 10 bản ghi mỗi trang
       const totalItems = await this.model.find(filter).countDocuments(); // Sử dụng countDocuments() để đếm số lượng khớp với filter
       const totalPages = Math.ceil(totalItems / pageSize);

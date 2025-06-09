@@ -35,7 +35,7 @@ export const accountSlide = createSlice({
       // immutable state based off those changes
       state.isAuthenticated = true;
       state.isLoading = false;
-      state.user = action.payload.user;
+      state.user = action.payload;
     },
 
     doLogoutAction: (state, action) => {

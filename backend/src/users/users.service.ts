@@ -57,12 +57,16 @@ export class UsersService {
     }
     const user = await this.userModel
       .findById(id)
-      .populate({ path: 'role', select: { name: 1 } })
-      .select('-password');
+      .populate({
+        path: 'role',
+        select: { name: 1, email: 1, avatar: 1, role: 1 },
+      })
+      .select('-password')
+      .lean();
     if (!user) {
       throw new BadRequestException('User is not valid');
     }
-    return { user };
+    return user;
   }
 
   async isValidPassword(password: string, hashPassword: string) {
@@ -146,6 +150,8 @@ export class UsersService {
       address,
       age,
       phone,
+      isActive: true,
+      avatar: 'ee11cbb19052e40b07aac0ca060c23ee.png',
       gender,
       role: 'USER',
     });
@@ -168,6 +174,8 @@ export class UsersService {
       phone,
       gender,
       role,
+      isActive: true,
+      avatar: 'ee11cbb19052e40b07aac0ca060c23ee.png',
       createdBy: {
         _id: userCreated._id,
         email: userCreated.email,
