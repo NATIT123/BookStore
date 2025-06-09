@@ -45,7 +45,7 @@ async function bootstrap() {
   });
 
   //config versioning
-  app.setGlobalPrefix('api/v1/', { exclude: ['/'] });
+  app.setGlobalPrefix('api');
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: ['1', '2'],
@@ -76,7 +76,8 @@ async function bootstrap() {
       persistAuthorization: true,
     },
   });
-
-  await app.listen(configService.get<string>('PORT') || 8080);
+  const port = configService.get<string>('PORT') || 8080;
+  await app.listen(port || 8080);
+  console.log(`🚀 Server running on http://localhost:${port}`);
 }
 bootstrap();

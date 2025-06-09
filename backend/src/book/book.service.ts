@@ -18,7 +18,7 @@ interface PaginationMeta {
 }
 
 // Định nghĩa interface cho kết quả findAll có phân trang
-interface PaginatedResult<T> {
+export interface PaginatedResult<T> {
   meta: PaginationMeta;
   result: T[];
 }

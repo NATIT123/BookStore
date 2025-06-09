@@ -14,8 +14,7 @@ import {
 import { BookService } from './book.service'; // Import BookService
 import { CreateBookDto } from './dto/create-book.dto'; // Import CreateBookDto
 import { UpdateBookDto } from './dto/update-book.dto'; // Import UpdateBookDto
-import { Public } from "../decorator/customize";
-
+import { Public } from '../decorator/customize';
 
 // Sử dụng decorator @Controller để định nghĩa BookController với base route 'book'
 @Controller('book')
@@ -50,24 +49,24 @@ export class BookController {
   }
 
   // Endpoint PUT /book/:id
-  @Put(":id")
-  update(@Param("id") id: string, @Body() updateBookDto: UpdateBookDto) {
+  @Put(':id')
+  update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
     return this.bookService.update(id, updateBookDto);
   }
 
   // Endpoint DELETE /book/:id
-  @Delete(":id")
-  remove(@Param("id") id: string) {
+  @Delete(':id')
+  remove(@Param('id') id: string) {
     return this.bookService.remove(id);
   }
 
   @Public()
-  @Post("/delete-image") // Original code used POST here
+  @Post('/delete-image') // Original code used POST here
   // Lấy các giá trị 'id', 'type', 'imagePath' từ body
   deleteImage(
-    @Body("id") id: string,
-    @Body("type") type: "thumbnail" | "slider", // Rõ ràng hơn về kiểu của 'type'
-    @Body("imagePath") imagePath: string
+    @Body('id') id: string,
+    @Body('type') type: 'thumbnail' | 'slider', // Rõ ràng hơn về kiểu của 'type'
+    @Body('imagePath') imagePath: string,
   ) {
     // Giả định bookService có phương thức này, cần kiểm tra lại Service
     // Dựa trên phân tích Service, phương thức tương ứng là deleteAnImage

@@ -1,23 +1,5 @@
-import {
-  IsDefined,
-  IsEmail,
-  IsNotEmpty,
-  IsNotEmptyObject,
-  IsObject,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
-import { Type } from 'class-transformer';
-import mongoose from 'mongoose';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-
-class Company {
-  @IsNotEmpty()
-  _id: mongoose.Types.ObjectId;
-
-  @IsNotEmpty()
-  name: string;
-}
 
 export class CreateUserDto {
   @IsEmail({})
@@ -44,13 +26,6 @@ export class CreateUserDto {
 
   @IsNotEmpty({ message: 'RoleId khong dc de trong' })
   role: string;
-
-  @IsDefined()
-  @IsNotEmptyObject()
-  @IsObject()
-  @ValidateNested()
-  @Type(() => Company)
-  company: Company;
 }
 
 export class RegisterUserDto {

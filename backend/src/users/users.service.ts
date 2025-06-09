@@ -26,8 +26,8 @@ export class UsersService {
     delete filter.pageSize;
     filter.isDeleted = false;
     console.log(projection);
-    let offset = (+currentPage - 1) * +limit;
-    let defaultLimit = +limit ? +limit : 10;
+    const offset = (+currentPage - 1) * +limit;
+    const defaultLimit = +limit ? +limit : 10;
     const totalItems = (await this.userModel.find(filter)).length;
     const totalPages = Math.ceil(totalItems / defaultLimit);
 
@@ -55,7 +55,7 @@ export class UsersService {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new BadRequestException('Id is not valid');
     }
-    let user = await this.userModel
+    const user = await this.userModel
       .findById(id)
       .populate({ path: 'role', select: { name: 1 } })
       .select('-password');
@@ -77,12 +77,12 @@ export class UsersService {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new BadRequestException('Id is not valid');
     }
-    let user = await this.userModel.findById(id);
+    const user = await this.userModel.findById(id);
     if (!user) {
       throw new BadRequestException('User is not valid');
     }
     try {
-      let updateUser = await this.userModel.updateOne(
+      await this.userModel.updateOne(
         { _id: id },
         {
           ...updateUserDto,
@@ -92,10 +92,10 @@ export class UsersService {
           },
         },
       );
+      return { message: true };
     } catch (err) {
       return err;
     }
-    return { message: true };
   }
 
   async remove(id: string, user: IUser) {
@@ -139,7 +139,7 @@ export class UsersService {
       throw new BadRequestException(`Email:${email} is exist`);
     }
     const hashPassword = this.getHashPassword(password);
-    let newUser = await this.userModel.create({
+    const newUser = await this.userModel.create({
       email,
       name,
       password: hashPassword,
@@ -153,23 +153,13 @@ export class UsersService {
   }
 
   async createUser(user: CreateUserDto, userCreated: IUser) {
-    const {
-      email,
-      name,
-      password,
-      address,
-      age,
-      phone,
-      gender,
-      company,
-      role,
-    } = user;
+    const { email, name, password, address, age, phone, gender, role } = user;
     const isExistEmail = await this.userModel.findOne({ email: email });
     if (isExistEmail) {
       throw new BadRequestException(`Email:${email} is exist`);
     }
     const hashPassword = this.getHashPassword(password);
-    let newUser = await this.userModel.create({
+    const newUser = await this.userModel.create({
       email,
       name,
       password: hashPassword,
@@ -178,7 +168,6 @@ export class UsersService {
       phone,
       gender,
       role,
-      company,
       createdBy: {
         _id: userCreated._id,
         email: userCreated.email,
@@ -191,7 +180,7 @@ export class UsersService {
     if (!mongoose.Types.ObjectId.isValid(_id)) {
       throw new BadRequestException('Id is not valid');
     }
-    let user = await this.userModel.findById(_id);
+    const user = await this.userModel.findById(_id);
     if (!user) {
       throw new BadRequestException('User is not valid');
     }

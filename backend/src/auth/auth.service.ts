@@ -5,7 +5,7 @@ import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { IUser } from 'src/users/users.interface';
 import { Response } from 'express';
-const ms = require('ms');
+import ms from 'ms';
 @Injectable()
 export class AuthService {
   constructor(
@@ -69,7 +69,7 @@ export class AuthService {
   }
 
   async register(registerUserDto: RegisterUserDto) {
-    let newUser = await this.usersService.registerUser(registerUserDto);
+    const newUser = await this.usersService.registerUser(registerUserDto);
     return {
       _id: newUser?._id,
       createdAt: newUser?.createdAt,
@@ -87,50 +87,77 @@ export class AuthService {
 
   processNewToken = async (refreshToken: string, response: Response) => {
     try {
+      // Verify refresh token
       this.jwtService.verify(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
       });
 
-      let user = await this.usersService.findUserByToken(refreshToken);
-      if (user) {
-        const { _id, name, email } = user;
+      // Nếu verify thành công nghĩa là refresh token còn hạn
+      // => chỉ cấp access token mới thôi, không cấp refresh token mới
+      const user = await this.usersService.findUserByToken(refreshToken);
+      if (!user) {
+        throw new BadRequestException(
+          'Refresh token is not valid. Please sign in again',
+        );
+      }
+
+      const { _id, name, email, role } = user;
+      const payload = {
+        sub: 'token refresh',
+        iss: 'from server',
+        _id,
+        name,
+        email,
+        role: role.name,
+      };
+
+      return {
+        access_token: this.jwtService.sign(payload),
+        user: { _id, name, email, role: role.name },
+      };
+    } catch (err) {
+      if (err.name === 'TokenExpiredError') {
+        // Refresh token hết hạn => cấp refresh token + access token mới
+        // Có thể lấy user từ DB theo refresh token cũ hoặc JWT payload (tùy cách lưu)
+        const user = await this.usersService.findUserByToken(refreshToken);
+        if (!user) {
+          throw new BadRequestException(
+            'Refresh token is not valid. Please sign in again',
+          );
+        }
+        const { _id, name, email, role } = user;
         const payload = {
           sub: 'token refresh',
           iss: 'from server',
           _id,
           name,
           email,
-          role: user.role.name,
+          role: role.name,
         };
-        const refreshToken = this.createRefreshToken(payload);
 
-        //Update user refreshToken
-        await this.usersService.updateUserToken(refreshToken, _id.toString());
+        // Tạo refresh token mới
+        const newRefreshToken = this.createRefreshToken(payload);
+        await this.usersService.updateUserToken(
+          newRefreshToken,
+          _id.toString(),
+        );
 
-        ///Set Cookie refresh_token
+        // Set lại cookie mới
         response.clearCookie('refresh_token');
-        response.cookie('refresh_token', refreshToken, {
+        response.cookie('refresh_token', newRefreshToken, {
           httpOnly: true,
           maxAge: ms(this.configService.get<string>('JWT_REFRESH_EXPIRE')),
         });
 
         return {
           access_token: this.jwtService.sign(payload),
-          user: {
-            _id,
-            name,
-            email,
-            role: user.role.name,
-          },
+          user: { _id, name, email, role: role.name },
         };
-      } else {
-        throw new BadRequestException(
-          'Refresh token is not valid.Please sign in again',
-        );
       }
-    } catch (err) {
+
+      // Các lỗi khác
       throw new BadRequestException(
-        'Refresh token is not valid.Please sign in again',
+        'Refresh token is not valid. Please sign in again',
       );
     }
   };
