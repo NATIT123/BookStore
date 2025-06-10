@@ -6,7 +6,8 @@ const initialState = {
   user: {
     email: "",
     phone: "",
-    fullName: "",
+    name: "",
+    address: "",
     role: "",
     avatar: "",
     id: "",
@@ -44,16 +45,17 @@ export const accountSlide = createSlice({
       state.user = {
         email: "",
         phone: "",
-        fullName: "",
+        name: "",
         role: "",
         avatar: "",
+        address: "",
         id: "",
       };
     },
     doUpdateUserInfoAction: (state, action) => {
       state.user.avatar = action.payload.avatar;
       state.user.phone = action.payload.phone;
-      state.user.fullName = action.payload.fullName;
+      state.user.name = action.payload.fullName;
     },
 
     doUploadAvatarAction: (state, action) => {

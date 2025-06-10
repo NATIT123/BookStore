@@ -23,7 +23,7 @@ import ManageBookPage from "./pages/admin/book";
 import OrderPage from "./pages/order";
 import HistoryPage from "./pages/history";
 import AdminOrderPage from "./pages/admin/order";
-
+import PaymentResult from "./pages/order/PaymentResult";
 const Layout = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -131,6 +131,7 @@ export default function App() {
         },
       ],
     },
+    { path: "/payment-result", element: <PaymentResult /> },
 
     {
       path: "/login",

@@ -46,7 +46,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const targetMethod = request.method;
     const targetEndPoint = request.route?.path as string;
 
-    const permisisons = user?.permissions ?? [];
+    const permisisons = user?.role.permissions ?? [];
 
     let isExist = permisisons.find(
       (permission: Permission) =>
@@ -55,6 +55,22 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     );
 
     if (targetEndPoint.startsWith('/api/v1/auth')) isExist = true;
+    if (targetEndPoint === '/api/v1/getAllBanks') isExist = true;
+    if (
+      user?.role.name === 'NORMAL_USER' &&
+      targetEndPoint.startsWith('/api/v1/user')
+    ) {
+      isExist = true;
+    }
+
+    if (
+      (user?.role.name === 'SUPER_ADMIN' &&
+        targetEndPoint.startsWith('/api/v1/admin')) ||
+      targetEndPoint.startsWith('/api/v1/database')
+    ) {
+      isExist = true;
+    }
+
     if (!isExist && !isSkipPermission) {
       throw new ForbiddenException(
         "You don't have permission to access this route",

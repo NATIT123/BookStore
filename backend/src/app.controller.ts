@@ -22,4 +22,9 @@ export class AppController {
       message: message1,
     };
   }
+
+  @Get('getAllBanks')
+  getBankLists() {
+    return this.appService.getBankList();
+  }
 }

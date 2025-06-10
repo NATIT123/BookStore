@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose'; // Import Types từ mongoose
 
 @Schema()
 export class Order extends Document {
@@ -12,23 +12,37 @@ export class Order extends Document {
   @Prop()
   address!: string;
 
-  @Prop({ default: 'COD' }) // Hình thức thanh toán (Cash On Delivery mặc định)
+  @Prop({ default: 'COD' })
   type!: string;
 
-  @Prop()
-  detail!: any[]; // Chi tiết đơn hàng, có thể là mảng các sản phẩm
+  // Định nghĩa mảng trực tiếp tại đây
+  @Prop({
+    type: [
+      {
+        bookId: { type: Types.ObjectId, ref: 'Book', required: true },
+        quantity: { type: Number, required: true },
+        price: { type: Number, required: true },
+      },
+    ],
+    default: [], // Luôn đặt giá trị mặc định là một mảng rỗng
+  })
+  orderItems!: Array<{
+    bookId: Types.ObjectId;
+    quantity: number;
+    price: number;
+  }>;
 
   @Prop()
   totalPrice!: number;
 
-  @Prop({ default: new Date() }) // Thời gian tạo mặc định là hiện tại
+  @Prop({ default: Date.now })
   createdAt!: Date;
 
-  @Prop({ default: new Date() }) // Thời gian cập nhật mặc định là hiện tại
+  @Prop({ default: Date.now })
   updatedAt!: Date;
 
-  @Prop()
-  deletedAt!: Date; // Nếu soft delete
+  @Prop({ required: false })
+  deletedAt?: Date;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

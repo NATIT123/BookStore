@@ -21,6 +21,7 @@ import {
 } from './init';
 import { Country, CountryDocument } from './schemas/country.schema';
 import { Province, ProvinceDocument } from './schemas/province.schema';
+import { Types } from 'mongoose';
 // Define types for method return values for clarity
 export interface DashboardData {
   countOrder: number;
@@ -112,7 +113,7 @@ export class DatabasesService implements OnModuleInit {
             name: USER_ROLE,
             description: 'Người dùng/Ứng viên sử dụng hệ thống',
             isActive: true,
-            permissions: [], //không set quyền, chỉ cần add ROLE
+            permissions: [new Types.ObjectId('648ab719fa16b294212e4042')], //không set quyền, chỉ cần add ROLE
           },
         ]);
       }
@@ -180,8 +181,8 @@ export class DatabasesService implements OnModuleInit {
   }
 
   async getDashboard(): Promise<DashboardData> {
-    const countOrder = await this.modelOrder.countDocuments({});
-    const countUser = await this.userModel.countDocuments({});
+    const countOrder = await this.modelOrder.countDocuments({}).exec();
+    const countUser = await this.userModel.countDocuments({}).exec();
     return {
       countOrder,
       countUser,

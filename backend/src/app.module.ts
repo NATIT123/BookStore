@@ -17,6 +17,9 @@ import { HealthModule } from './health/health.module';
 import { BookModule } from './book/book.module';
 import { OrderModule } from './order/order.module';
 import { HistoryModule } from './history/history.module';
+import { TransactionModule } from './transaction/transaction.module';
+import { VnpayModule } from 'nestjs-vnpay';
+import { HashAlgorithm, ignoreLogger } from 'vnpay';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -43,6 +46,19 @@ import { HistoryModule } from './history/history.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    //Init VNPAY
+    VnpayModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        hashAlgorithm: HashAlgorithm.SHA256,
+        enableLog: true,
+        secureSecret: configService.getOrThrow<string>('VNPAY_SECURE_SECRET'),
+        tmnCode: configService.getOrThrow<string>('VNPAY_TMN_CODE'),
+        loggerFn: ignoreLogger,
+      }),
+      inject: [ConfigService],
+    }),
+    VnpayModule,
     UsersModule,
     AuthModule,
     FilesModule,
@@ -54,6 +70,7 @@ import { HistoryModule } from './history/history.module';
     BookModule,
     OrderModule,
     HistoryModule,
+    TransactionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

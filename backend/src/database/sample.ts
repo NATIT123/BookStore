@@ -89,9 +89,9 @@ export const INIT_PERMISSIONS = [
   {
     _id: '648ab6d3fa16b294212e4033',
     name: 'Create User',
-    apiPath: '/api/v1/users',
+    apiPath: '/api/v1/user',
     method: 'POST',
-    module: 'USERS',
+    module: 'user',
     createdBy: {
       _id: '647b5108a8a243e8191855b5',
       email: 'hoidanit@gmail.com',
@@ -105,9 +105,9 @@ export const INIT_PERMISSIONS = [
   {
     _id: '648ab6e7fa16b294212e4038',
     name: 'Get User by Id',
-    apiPath: '/api/v1/users/:id',
+    apiPath: '/api/v1/user/:id',
     method: 'GET',
-    module: 'USERS',
+    module: 'user',
     createdBy: {
       _id: '647b5108a8a243e8191855b5',
       email: 'hoidanit@gmail.com',
@@ -121,9 +121,9 @@ export const INIT_PERMISSIONS = [
   {
     _id: '648ab6fdfa16b294212e403d',
     name: 'Get User with paginate',
-    apiPath: '/api/v1/users',
+    apiPath: '/api/v1/user',
     method: 'GET',
-    module: 'USERS',
+    module: 'user',
     createdBy: {
       _id: '647b5108a8a243e8191855b5',
       email: 'hoidanit@gmail.com',
@@ -137,9 +137,9 @@ export const INIT_PERMISSIONS = [
   {
     _id: '648ab719fa16b294212e4042',
     name: 'Update User',
-    apiPath: '/api/v1/users/:id',
+    apiPath: '/api/v1/user/:id',
     method: 'PATCH',
-    module: 'USERS',
+    module: 'user',
     createdBy: {
       _id: '647b5108a8a243e8191855b5',
       email: 'hoidanit@gmail.com',
@@ -153,9 +153,9 @@ export const INIT_PERMISSIONS = [
   {
     _id: '648ab728fa16b294212e4047',
     name: 'Delete User',
-    apiPath: '/api/v1/users/:id',
+    apiPath: '/api/v1/user/:id',
     method: 'DELETE',
-    module: 'USERS',
+    module: 'user',
     createdBy: {
       _id: '647b5108a8a243e8191855b5',
       email: 'hoidanit@gmail.com',

@@ -11,19 +11,15 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import {
-  ResponseMessage,
-  SkipCheckPermission,
-  User,
-} from 'src/decorator/customize';
+import { ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from './users.interface';
+import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 
-@Controller('users')
+@Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @ResponseMessage('Get all user with paginate') //decorator with custom message
-  @SkipCheckPermission()
   @Get()
   findAll(
     @Query('current') currentPage: string,
@@ -47,6 +43,16 @@ export class UsersController {
     @User() user,
   ) {
     return this.usersService.update(id, updateUserDto, user);
+  }
+
+  @ResponseMessage('Update new password')
+  @Post('change-password/:id')
+  updatePassword(
+    @Param('id') id: string,
+    @Body() updateUserPasswordDto: UpdateUserPasswordDto,
+    @User() user,
+  ) {
+    return this.usersService.changePassword(id, updateUserPasswordDto, user);
   }
 
   @ResponseMessage('Remove a new user')

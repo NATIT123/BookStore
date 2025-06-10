@@ -25,12 +25,18 @@ export class AuthService {
       if (isValid) {
         const returnUser = await user.populate({
           path: 'role',
-          select: { _id: 1, name: 1, permissions: 1, avatar: 1, phone: 1 },
+          select: {
+            _id: 1,
+            name: 1,
+            permissions: 1,
+            avatar: 1,
+            phone: 1,
+            address: 1,
+          },
           populate: [
             { path: 'permissions', select: { method: 1, apiPath: 1 } },
           ],
         });
-        console.log(returnUser);
         return returnUser;
       }
     }
@@ -43,10 +49,6 @@ export class AuthService {
       sub: 'token login',
       iss: 'from server',
       _id,
-      name,
-      email,
-      role,
-      avatar,
     };
     const refreshToken = this.createRefreshToken(payload);
 

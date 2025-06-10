@@ -60,17 +60,18 @@ const UserInfo = (props) => {
   };
 
   const onFinish = async (values) => {
-    const { fullName, phone, _id } = values;
+    const { fullName, phone } = values;
     setIsSubmit(true);
-    const res = await callUpdateUserInfo(_id, phone, fullName, userAvatar);
+    const res = await callUpdateUserInfo(user._id, phone, fullName, userAvatar);
+    console.log(res);
 
     if (res && res.data) {
       //update redux
       dispatch(doUpdateUserInfoAction({ avatar: userAvatar, phone, fullName }));
       message.success("Cập nhật thông tin user thành công");
 
-      //force renew token
-      localStorage.removeItem("access_token");
+      // //force renew token
+      // localStorage.removeItem("access_token");
     } else {
       notification.error({
         message: "Đã có lỗi xảy ra",

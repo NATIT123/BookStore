@@ -8,6 +8,7 @@ import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from './users.interface';
 import aqp from 'api-query-params';
+import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 @Injectable()
 export class UsersService {
   constructor(
@@ -25,7 +26,6 @@ export class UsersService {
     delete filter.current;
     delete filter.pageSize;
     filter.isDeleted = false;
-    console.log(projection);
     const offset = (+currentPage - 1) * +limit;
     const defaultLimit = +limit ? +limit : 10;
     const totalItems = (await this.userModel.find(filter)).length;
@@ -59,7 +59,11 @@ export class UsersService {
       .findById(id)
       .populate({
         path: 'role',
-        select: { name: 1, email: 1, avatar: 1, role: 1 },
+        select: 'name email avatar role phone',
+        populate: {
+          path: 'permissions', // chính là field bên trong schema Role
+          select: 'method apiPath', // các field bạn muốn lấy từ permission
+        },
       })
       .select('-password')
       .lean();
@@ -93,6 +97,45 @@ export class UsersService {
           updatedBy: {
             _id: userUpdated._id,
             email: userUpdated.email,
+          },
+        },
+      );
+      return { message: true };
+    } catch (err) {
+      return err;
+    }
+  }
+
+  async changePassword(
+    id: string,
+    updateUserPassword: UpdateUserPasswordDto,
+    currentUser: IUser,
+  ) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('Id is not valid');
+    }
+
+    const user = await this.userModel.findById(id);
+    if (!user) {
+      throw new BadRequestException('User is not valid');
+    }
+    const isValid = await this.isValidPassword(
+      updateUserPassword.password,
+      user.password,
+    );
+
+    if (!isValid) {
+      throw new BadRequestException('Password is wrong');
+    }
+    try {
+      await this.userModel.updateOne(
+        { _id: id },
+        {
+          ...user,
+          password: this.getHashPassword(updateUserPassword.newPassword),
+          updatedBy: {
+            _id: currentUser._id,
+            email: currentUser.email,
           },
         },
       );
