@@ -10,7 +10,10 @@ import {
 } from 'class-validator';
 
 class DetailOrder {
-  @IsNotEmpty({ message: 'bookName không được để trống' })
+  @IsNotEmpty({ message: 'price không được để trống' })
+  price!: number;
+
+  @IsNotEmpty({ message: 'bookname không được để trống' })
   bookName!: string;
 
   @IsNotEmpty({ message: 'quantity không được để trống' })
@@ -20,7 +23,7 @@ class DetailOrder {
 
   @IsNotEmpty({ message: '_id không được để trống' })
   @IsMongoId({ message: '_id phải có định dạng là mongodb id' })
-  _id!: string;
+  bookId!: string;
 }
 export class CreateOrderDto {
   @IsNotEmpty({ message: 'name không được để trống' })
@@ -37,7 +40,7 @@ export class CreateOrderDto {
   @ArrayNotEmpty({ message: 'detail cần ít nhất 1 phần tử' })
   @ValidateNested({ each: true })
   @Type(() => DetailOrder)
-  detail!: DetailOrder[];
+  orderItems!: DetailOrder[];
 
   @IsNotEmpty({ message: 'totalPrice không được để trống' })
   @IsNumber({}, { message: 'totalPrice phải có định dạng là số nguyên' })

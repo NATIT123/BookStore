@@ -2,7 +2,7 @@ import apiQueryParams from 'api-query-params';
 
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 
 import { Book, BookDocument } from '../book/schemas/book.schema';
 import { Order, OrderDocument } from './schemas/order.schema';
@@ -17,37 +17,38 @@ export class OrderService {
 
   // Tạo đơn hàng mới
   async create(orderDto: any, user?: any) {
-    const items = orderDto.detail;
-    const ids = items.map((item: { _id: any }) => item._id);
+    const items = orderDto.orderItems;
+    const ids = items.map(
+      (item: { bookId: any }) => new mongoose.Types.ObjectId(item.bookId),
+    );
 
     // Lấy thông tin sách theo ID
     const books = await this.modelBook.find({ _id: { $in: ids } });
-
     if (books.length > 0 && books.length === ids.length) {
       let hasError = false;
       let errorMsg = '';
-      let totalPrice = 0;
 
       // Kiểm tra tồn kho và tính tổng tiền
-      items.forEach((item: { _id: any; quantity: number; bookName: any }) => {
-        const book = books.find((b) => b._id.toString() === item._id);
-        if (book) {
-          totalPrice += item.quantity * book.price;
-          if (book.quantity < item.quantity) {
-            hasError = true;
-            errorMsg = `Book ${item.bookName} không đủ số lượng yêu cầu = ${item.quantity}`;
+      items.forEach(
+        (item: { bookId: any; quantity: number; bookName: any }) => {
+          const book = books.find((b) => b._id.toString() === item.bookId);
+          if (book) {
+            if (book.quantity < item.quantity) {
+              hasError = true;
+              errorMsg = `Book ${item.bookName} không đủ số lượng yêu cầu = ${item.quantity}`;
+            }
           }
-        }
-      });
+        },
+      );
 
       if (hasError) {
         throw new BadRequestException(errorMsg);
       }
 
       // Cập nhật số lượng sách trong kho
-      const bulkOps = items.map((item: { _id: any; quantity: number }) => ({
+      const bulkOps = items.map((item: { bookId: any; quantity: number }) => ({
         updateOne: {
-          filter: { _id: item._id },
+          filter: { _id: item.bookId },
           update: {
             $inc: {
               quantity: -item.quantity,
@@ -62,9 +63,6 @@ export class OrderService {
       // Lưu đơn hàng
       await this.modelOrder.create({
         ...orderDto,
-        totalPrice,
-        createdAt: new Date(),
-        updatedAt: new Date(),
       });
 
       // Lưu lịch sử giao dịch
@@ -73,8 +71,8 @@ export class OrderService {
         email: user?.email,
         userId: user?._id,
         phone: orderDto.phone,
-        totalPrice,
-        detail: orderDto.detail,
+        totalPrice: orderDto.totalPrice,
+        detail: orderDto.orderItems,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
@@ -86,16 +84,17 @@ export class OrderService {
   }
 
   // Tìm tất cả đơn hàng có phân trang, lọc, sắp xếp, populate
-  async findAll(query: any, page: string, pageSize: string) {
-    const { filter, projection, population, sort } = apiQueryParams(query);
-    const skip = (+page - 1) * +pageSize;
-    const limit = +pageSize || 10;
+  async findAll(query: any, page: string, pagesize: string) {
+    const { current, pageSize, ...restQuery } = query;
+    const { filter, projection, population, sort } = apiQueryParams(restQuery);
+    const skip = (+page - 1) * +pagesize;
+    const limit = +pagesize || 10;
     const total = (await this.modelOrder.find(filter)).length;
 
     return {
       meta: {
         current: page,
-        pageSize,
+        pagesize,
         pages: Math.ceil(total / limit),
         total,
       },

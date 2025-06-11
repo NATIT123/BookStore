@@ -56,6 +56,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     if (targetEndPoint.startsWith('/api/v1/auth')) isExist = true;
     if (targetEndPoint === '/api/v1/getAllBanks') isExist = true;
+    if (targetEndPoint === '/api/v1/order' && targetMethod == 'POST')
+      isExist = true;
+
+    if (targetEndPoint === '/api/v1/history') isExist = true;
     if (
       user?.role.name === 'NORMAL_USER' &&
       targetEndPoint.startsWith('/api/v1/user')
@@ -66,7 +70,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (
       (user?.role.name === 'SUPER_ADMIN' &&
         targetEndPoint.startsWith('/api/v1/admin')) ||
-      targetEndPoint.startsWith('/api/v1/database')
+      targetEndPoint.startsWith('/api/v1/database') ||
+      targetEndPoint.startsWith('/api/v1/order')
     ) {
       isExist = true;
     }

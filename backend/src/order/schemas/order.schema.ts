@@ -22,6 +22,7 @@ export class Order extends Document {
         bookId: { type: Types.ObjectId, ref: 'Book', required: true },
         quantity: { type: Number, required: true },
         price: { type: Number, required: true },
+        bookName: { type: String, required: true },
       },
     ],
     default: [], // Luôn đặt giá trị mặc định là một mảng rỗng

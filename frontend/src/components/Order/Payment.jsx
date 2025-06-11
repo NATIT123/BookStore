@@ -12,7 +12,7 @@ import { DeleteTwoTone, LoadingOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { callFetchListBanks } from "../../services/api";
+import { callFetchListBanks, callPayment } from "../../services/api";
 import "./Payment.css";
 import {
   doDeleteItemCartAction,
@@ -54,7 +54,6 @@ const Payment = (props) => {
         const res = await callFetchListBanks();
 
         if (res.statusCode === 200) {
-          console.log("data", res.data);
           setBanks(res.data);
           setInitialBanks(res.data);
         }
@@ -102,24 +101,14 @@ const Payment = (props) => {
     }
   };
 
-  const handlePlaceOrder = () => {
-    if (!address) {
-      notification.error({
-        message: "Đã có lỗi xảy ra",
-        description: "Thông tin địa chỉ không được để trống!",
-      });
-      return;
-    }
-    props.setCurrentStep(2);
-  };
-
   const onFinish = async (values) => {
     setIsSubmit(true);
     const detailOrder = carts.map((item) => {
       return {
-        bookName: item.detail.mainText,
+        price: item.detail.price,
         quantity: item.quantity,
-        _id: item._id,
+        bookId: item.detail._id,
+        bookName: item.detail.mainText,
       };
     });
     const data = {
@@ -127,19 +116,31 @@ const Payment = (props) => {
       address: values.address,
       phone: values.phone,
       totalPrice: totalPrice,
-      detail: detailOrder,
+      orderItems: detailOrder,
     };
 
-    const res = await callPlaceOrder(data);
-    if (res && res.data) {
-      message.success("Đặt hàng thành công !");
-      dispatch(doPlaceOrderAction());
-      props.setCurrentStep(2);
+    if (values.paymentMethod === "vnpay") {
+      if (!selectedBank) {
+        toast.error("Vui lòng chọn ngân hàng trước khi tiếp tục.");
+        return;
+      }
+      handlePaymentVNPAY({ ...data, type: "VNPAY" });
+      setIsSubmit(true);
     } else {
-      notification.error({
-        message: "Đã có lỗi xảy ra",
-        description: res.message,
-      });
+      setIsSubmit(true);
+      // Thanh toán khi nhận hàng
+      const res = await callPlaceOrder(data);
+      if (res && res.statusCode === 201) {
+        message.success("Đặt hàng thành công !");
+        dispatch(doPlaceOrderAction());
+        props.setCurrentStep(2);
+      } else {
+        console.log("error", res);
+        notification.error({
+          message: "Đã có lỗi xảy ra",
+          description: res.message,
+        });
+      }
     }
     setIsSubmit(false);
   };
@@ -247,6 +248,7 @@ const Payment = (props) => {
               labelCol={{ span: 24 }}
               label="Địa chỉ"
               name="address"
+              initialValue={user?.address}
               rules={[
                 { required: true, message: "Địa chỉ không được để trống!" },
               ]}

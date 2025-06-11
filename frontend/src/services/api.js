@@ -26,16 +26,34 @@ export const callFetchListUser = (query) => {
   return axios.get(`/api/v1/user?${query}`);
 };
 
-export const callCreateAUser = (fullName, password, email, phone) => {
-  return axios.post("/api/v1/user", { fullName, password, email, phone });
+export const callCreateAUser = (
+  name,
+  password,
+  email,
+  phone,
+  address,
+  age,
+  gender,
+  role
+) => {
+  return axios.post("/api/v1/user", {
+    name,
+    password,
+    email,
+    phone,
+    address,
+    age,
+    gender,
+    role,
+  });
 };
 
 export const callBulkCreateUser = (data) => {
   return axios.post("/api/v1/user/bulk-create", data);
 };
 
-export const callUpdateUser = (_id, fullName, phone) => {
-  return axios.patch(`/api/v1/user/${_id}`, { fullName, phone });
+export const callUpdateUser = (_id, name, phone) => {
+  return axios.patch(`/api/v1/user/${_id}`, { name, phone });
 };
 
 export const callDeleteUser = (id) => {
@@ -171,13 +189,17 @@ export const callFetchListBanks = () => {
 };
 
 export const callPayment = (payload) => {
-  return axios.post("/payment/payment-url", payload);
+  return axios.post("api/v1/order/payment/payment-url", payload);
 };
 
 export const callVnPayReturn = (queryString) => {
-  return axios.get(`api/v1/payment/vnpay-return/${queryString}`);
+  return axios.get(`api/v1/order/payment/vnpay-return/${queryString}`);
 };
 
 export const callVnPayIpn = (queryString) => {
-  return axios.get(`/payment/vnpay-ipn/${queryString}`);
+  return axios.get(`api/v1/order/payment/vnpay-ipn/${queryString}`);
+};
+
+export const callFetchListRoles = () => {
+  return axios.get("api/v1/roles");
 };

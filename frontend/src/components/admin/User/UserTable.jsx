@@ -117,7 +117,7 @@ const UserTable = () => {
             <Popconfirm
               placement="leftTop"
               title={"Xác nhận xóa user"}
-              description={"Bạn có chắc chắn muốn xóa user này ?"}
+              description={`Bạn có chắc chắn muốn xóa user ${record.name} này ?`}
               onConfirm={() => handleDeleteUser(record._id)}
               okText="Xác nhận"
               cancelText="Hủy"

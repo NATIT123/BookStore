@@ -8,8 +8,8 @@ import {
   Delete,
   Req,
 } from "@nestjs/common";
-import { HistoryService } from "./history.service";
-import { CreateHistoryDto } from "./dto/create-history.dto";
+import { HistoryService } from './history.service';
+import { CreateHistoryDto } from './dto/create-history.dto';
 import { UpdateHistoryDto } from "./dto/update-history.dto";
 
 @Controller("history") // Định nghĩa route cho controller

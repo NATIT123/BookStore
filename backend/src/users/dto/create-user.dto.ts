@@ -26,9 +26,6 @@ export class CreateUserDto {
 
   @IsNotEmpty({ message: 'RoleId khong dc de trong' })
   role: string;
-
-  @IsNotEmpty({ message: 'Avatar khong dc de trong' })
-  avatar: string;
 }
 
 export class RegisterUserDto {
