@@ -16,7 +16,7 @@ export class OrderService {
   ) {}
 
   // Tạo đơn hàng mới
-  async create(orderDto: any, user?: any) {
+  async create(orderDto: any, user?: any): Promise<Order> {
     const items = orderDto.orderItems;
     const ids = items.map(
       (item: { bookId: any }) => new mongoose.Types.ObjectId(item.bookId),
@@ -61,7 +61,7 @@ export class OrderService {
       await this.modelBook.bulkWrite(bulkOps);
 
       // Lưu đơn hàng
-      await this.modelOrder.create({
+      const order = await this.modelOrder.create({
         ...orderDto,
       });
 
@@ -77,7 +77,7 @@ export class OrderService {
         updatedAt: new Date(),
       });
 
-      return "transaction's created success";
+      return order;
     }
 
     throw new BadRequestException('Books trong order không tồn tại');
@@ -117,5 +117,9 @@ export class OrderService {
   // Xóa đơn hàng (chưa xử lý logic, chỉ trả về 'ok')
   async remove(id: string, user?: any) {
     return 'ok';
+  }
+
+  async updateStatus(orderId: string, status: string) {
+    await this.modelOrder.findByIdAndUpdate(orderId, { status });
   }
 }

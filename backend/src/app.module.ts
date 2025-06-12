@@ -20,6 +20,7 @@ import { HistoryModule } from './history/history.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { VnpayModule } from 'nestjs-vnpay';
 import { HashAlgorithm, ignoreLogger } from 'vnpay';
+import { PaymentModule } from './payment/payment.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -50,8 +51,10 @@ import { HashAlgorithm, ignoreLogger } from 'vnpay';
     VnpayModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        hashAlgorithm: HashAlgorithm.SHA256,
+        hashAlgorithm: HashAlgorithm.SHA512,
         enableLog: true,
+        testMode: true,
+        vnpayHost: 'https://sandbox.vnpayment.vn',
         secureSecret: configService.getOrThrow<string>('VNPAY_SECURE_SECRET'),
         tmnCode: configService.getOrThrow<string>('VNPAY_TMN_CODE'),
         loggerFn: ignoreLogger,
@@ -71,6 +74,7 @@ import { HashAlgorithm, ignoreLogger } from 'vnpay';
     OrderModule,
     HistoryModule,
     TransactionModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

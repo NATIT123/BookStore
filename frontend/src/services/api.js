@@ -1,11 +1,22 @@
 import axios from "../utils/axios-customize";
 
-export const callRegister = (fullName, email, password, phone) => {
+export const callRegister = (
+  name,
+  email,
+  password,
+  phone,
+  gender,
+  address,
+  age
+) => {
   return axios.post("/api/v1/auth/register", {
-    fullName,
+    name,
     email,
     password,
     phone,
+    gender,
+    address,
+    age,
   });
 };
 
@@ -189,15 +200,15 @@ export const callFetchListBanks = () => {
 };
 
 export const callPayment = (payload) => {
-  return axios.post("api/v1/order/payment/payment-url", payload);
+  return axios.post("api/v1/payment/payment-url", payload);
 };
 
 export const callVnPayReturn = (queryString) => {
-  return axios.get(`api/v1/order/payment/vnpay-return/${queryString}`);
+  return axios.get(`api/v1/payment/vnpay-return/${queryString}`);
 };
 
 export const callVnPayIpn = (queryString) => {
-  return axios.get(`api/v1/order/payment/vnpay-ipn/${queryString}`);
+  return axios.get(`api/v1/payment/vnpay-ipn/${queryString}`);
 };
 
 export const callFetchListRoles = () => {

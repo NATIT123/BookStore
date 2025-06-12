@@ -88,9 +88,12 @@ const Payment = (props) => {
         return;
       }
 
-      const res = await callPayment(data);
-      if (res.status === "success") {
-        const paymentUrl = res.url;
+      const res = await callPayment({
+        ...data,
+        contentPayment: contentPaymentDefault,
+      });
+      if (res && res.data) {
+        const paymentUrl = res.data.url;
         if (paymentUrl) {
           window.location.href = paymentUrl;
         }
@@ -117,6 +120,7 @@ const Payment = (props) => {
       phone: values.phone,
       totalPrice: totalPrice,
       orderItems: detailOrder,
+      status: "pending",
     };
 
     if (values.paymentMethod === "vnpay") {
@@ -124,7 +128,11 @@ const Payment = (props) => {
         toast.error("Vui lòng chọn ngân hàng trước khi tiếp tục.");
         return;
       }
-      handlePaymentVNPAY({ ...data, type: "VNPAY" });
+      handlePaymentVNPAY({
+        ...data,
+        type: "VNPAY",
+        bankSelect: selectedBank,
+      });
       setIsSubmit(true);
     } else {
       setIsSubmit(true);

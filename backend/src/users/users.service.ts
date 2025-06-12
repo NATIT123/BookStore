@@ -10,6 +10,7 @@ import { IUser } from './users.interface';
 import aqp from 'api-query-params';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { Role, RoleDocument } from 'src/roles/schemas/Role.schema';
+import { USER_ROLE } from 'src/database/sample';
 @Injectable()
 export class UsersService {
   constructor(
@@ -187,6 +188,7 @@ export class UsersService {
     if (isExistEmail) {
       throw new BadRequestException(`Email:${email} is exist`);
     }
+    const userRole = await this.roleModel.findOne({ name: USER_ROLE });
     const hashPassword = this.getHashPassword(password);
     const newUser = await this.userModel.create({
       email,
@@ -198,7 +200,7 @@ export class UsersService {
       isActive: true,
       avatar: 'ee11cbb19052e40b07aac0ca060c23ee.png',
       gender,
-      role: 'USER',
+      role: userRole?._id,
     });
     return newUser;
   }
@@ -245,4 +247,8 @@ export class UsersService {
       .findOne({ refreshToken })
       .populate({ path: 'role' });
   };
+
+  async findByEmail(email: string) {
+    return this.userModel.findOne({ email });
+  }
 }

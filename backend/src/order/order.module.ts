@@ -16,6 +16,7 @@ import { History, HistorySchema } from '../history/schemas/history.schema';
       { name: History.name, schema: HistorySchema },
     ]),
   ],
+  exports: [OrderService],
   controllers: [OrderController],
   providers: [OrderService],
 })

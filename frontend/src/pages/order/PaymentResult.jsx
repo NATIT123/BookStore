@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { callVnPayIpn, callVnPayReturn } from "../../services/api";
 import { useAppDispatch } from "../../redux/hooks";
@@ -8,6 +8,7 @@ const PaymentResult = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
+  const [isError, setIsError] = useState(false);
   useEffect(() => {
     const queryString = location.search;
     const fetchTransaction = async () => {
@@ -15,14 +16,24 @@ const PaymentResult = () => {
         const res = await callVnPayReturn(queryString);
         const res1 = await callVnPayIpn(queryString);
 
-        if (res.status === "success" && res1.status === "success") {
+        if (
+          res &&
+          res.data.status === "success" &&
+          res1 &&
+          res1.data.status === "success"
+        ) {
           toast.success("🎉 Thanh toán thành công!");
           dispatch(doPlaceOrderAction());
         } else {
+          setIsError(true);
           toast.error("⚠️ Không tìm thấy giao dịch.");
         }
       } catch (err) {
-        toast.error(`🚨 ${err.message} .`);
+        console.log("err", err);
+        const errorMessage =
+          err?.response?.data?.message || err?.message || "Đã xảy ra lỗi";
+        setIsError(true);
+        toast.error(`🚨 ${errorMessage}`);
       }
     };
 
@@ -32,12 +43,16 @@ const PaymentResult = () => {
   return (
     <div style={{ padding: 40, textAlign: "center" }}>
       <img
-        src="https://cdn-icons-png.flaticon.com/512/190/190411.png"
-        alt="Thanh toán thành công"
+        src={
+          !isError
+            ? "https://cdn-icons-png.flaticon.com/512/190/190411.png"
+            : "https://cdn-icons-png.flaticon.com/512/753/753345.png"
+        }
+        alt={`Thanh toán ${!isError ? "thành công`" : "thất bại"}`}
         style={{ width: 100, height: 100, marginBottom: 20 }}
       />
       <h2 style={{ color: "green", marginBottom: 20 }}>
-        Thanh toán thành công!
+        {`Thanh toán ${!isError ? "thành công`" : "thất bại"}`}
       </h2>
       <button
         onClick={() => navigate("/")}

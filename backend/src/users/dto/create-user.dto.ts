@@ -1,6 +1,10 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-
+export enum UserType {
+  LOCAL = 'local',
+  GOOGLE = 'google',
+  FACEBOOK = 'facebook',
+}
 export class CreateUserDto {
   @IsEmail({})
   @IsNotEmpty({ message: 'Email khong dc de trong' })
@@ -26,6 +30,10 @@ export class CreateUserDto {
 
   @IsNotEmpty({ message: 'RoleId khong dc de trong' })
   role: string;
+
+  googleId: string;
+
+  facebookId: string;
 }
 
 export class RegisterUserDto {
@@ -36,11 +44,24 @@ export class RegisterUserDto {
   @IsNotEmpty({ message: 'Password khong dc de trong' })
   password: string;
 
+  confirmPassword: string;
+
   @IsNotEmpty({ message: 'Phone khong dc de trong' })
   phone: string;
 
   @IsNotEmpty({ message: 'Name khong dc de trong' })
   name: string;
+
+  googleId: string;
+
+  avatar: string;
+
+  @IsEnum(UserType)
+  @ApiProperty({
+    enum: UserType,
+    default: UserType.LOCAL,
+  })
+  type: UserType = UserType.LOCAL;
 
   @IsNotEmpty({ message: 'Gender khong dc de trong' })
   gender: string;

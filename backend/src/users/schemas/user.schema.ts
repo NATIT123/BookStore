@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { Role } from 'src/roles/schemas/Role.schema';
+import { UserType } from '../dto/create-user.dto';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -14,6 +15,19 @@ export class User {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Role.name })
   role: Role;
+
+  @Prop({
+    required: true,
+    enum: UserType,
+    default: UserType.LOCAL,
+  })
+  type: UserType;
+
+  @Prop()
+  googleId: string;
+
+  @Prop()
+  facebookId: string;
 
   @Prop()
   refreshToken: string;

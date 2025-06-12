@@ -1,14 +1,21 @@
 import { ConfigService } from '@nestjs/config';
-import { RegisterUserDto } from './../users/dto/create-user.dto';
+import { RegisterUserDto, UserType } from './../users/dto/create-user.dto';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { IUser } from 'src/users/users.interface';
 import { Response } from 'express';
 import * as ms from 'ms';
+import { User, UserDocument } from 'src/users/schemas/user.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Role, RoleDocument } from 'src/roles/schemas/Role.schema';
+import { USER_ROLE } from 'src/database/sample';
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Role.name) private roleModel: Model<RoleDocument>,
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
@@ -172,4 +179,74 @@ export class AuthService {
     response.clearCookie('refresh_token');
     return 'ok';
   };
+
+  async validateGoogleUser(profile: {
+    googleId: string;
+    email: string;
+    fullname: string;
+    photo?: string;
+  }) {
+    const existingUser = await this.userModel.findOne({ email: profile.email });
+
+    if (existingUser) {
+      if (!existingUser.googleId) {
+        existingUser.googleId = profile.googleId;
+        await existingUser.save();
+      }
+      return existingUser;
+    }
+    const userRole = await this.roleModel.findOne({ name: USER_ROLE });
+    const newUser = await this.userModel.create({
+      googleId: profile.googleId,
+      email: profile.email,
+      name: profile.fullname,
+      avatar: profile.photo,
+      type: UserType.GOOGLE,
+      role: userRole._id,
+      password: 'default_password',
+      confirmPassword: 'default_password',
+      address: 'default address',
+      gender: 'other',
+      age: 0,
+      phone: '0000000000',
+    });
+
+    return newUser;
+  }
+
+  async validateFacebookUser(profile: {
+    facebookId: string;
+    email: string;
+    fullname: string;
+    photo?: string;
+  }) {
+    const existingUser = await this.userModel.findOne({ email: profile.email });
+
+    if (existingUser) {
+      if (!existingUser.facebookId) {
+        existingUser.facebookId = profile.facebookId;
+        await existingUser.save();
+      }
+      return existingUser;
+    }
+
+    const userRole = await this.roleModel.findOne({ name: USER_ROLE });
+    console.log(profile);
+    const newUser = await this.userModel.create({
+      facebookId: profile.facebookId,
+      email: profile.email,
+      name: profile.fullname,
+      avatar: profile.photo,
+      type: UserType.FACEBOOK,
+      role: userRole._id,
+      password: 'default_password',
+      confirmPassword: 'default_password',
+      address: 'default address',
+      gender: 'other',
+      age: 0,
+      phone: '0000000000',
+    });
+
+    return newUser;
+  }
 }

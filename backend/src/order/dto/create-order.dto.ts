@@ -35,6 +35,9 @@ export class CreateOrderDto {
   @IsNotEmpty({ message: 'phone không được để trống' })
   phone!: string;
 
+  @IsNotEmpty({ message: 'status không được để trống' })
+  status!: string;
+
   @IsNotEmpty({ message: 'detail không được để trống' })
   @IsArray({ message: 'detail có định dạng là array' })
   @ArrayNotEmpty({ message: 'detail cần ít nhất 1 phần tử' })

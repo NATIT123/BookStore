@@ -63,9 +63,9 @@ const Header = (props) => {
     });
   }
 
-  const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${
-    user?.avatar
-  }`;
+  const urlAvatar = user?.avatar.startsWith("https")
+    ? user?.avatar
+    : `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
 
   const contentPopover = () => {
     return (

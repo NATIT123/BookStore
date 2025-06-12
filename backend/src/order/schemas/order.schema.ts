@@ -1,6 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose'; // Import Types từ mongoose
 
+export enum OrderStatus {
+  PENDING = 'pending',
+  PAID = 'paid',
+  FAILED = 'failed',
+}
+
 @Schema()
 export class Order extends Document {
   @Prop()
@@ -32,6 +38,13 @@ export class Order extends Document {
     quantity: number;
     price: number;
   }>;
+
+  @Prop({
+    type: String, // 👈 Bắt buộc phải chỉ định rõ kiểu ở đây
+    enum: OrderStatus,
+    default: OrderStatus.PENDING,
+  })
+  status: OrderStatus;
 
   @Prop()
   totalPrice!: number;

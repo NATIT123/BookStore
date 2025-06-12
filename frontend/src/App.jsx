@@ -24,6 +24,7 @@ import OrderPage from "./pages/order";
 import HistoryPage from "./pages/history";
 import AdminOrderPage from "./pages/admin/order";
 import PaymentResult from "./pages/order/PaymentResult";
+import LoginSuccess from "./pages/login/LoginSuccess";
 const Layout = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -133,6 +134,7 @@ export default function App() {
     },
     { path: "/payment-result", element: <PaymentResult /> },
 
+    { path: "/login-success", element: <LoginSuccess /> },
     {
       path: "/login",
       element: <LoginPage />,
@@ -149,6 +151,7 @@ export default function App() {
       {isLoading === false ||
       window.location.pathname === "/login" ||
       window.location.pathname === "/register" ||
+      window.location.pathname === "/login-success" ||
       window.location.pathname === "/" ||
       window.location.pathname.startsWith("/book") ? (
         <RouterProvider router={router} />

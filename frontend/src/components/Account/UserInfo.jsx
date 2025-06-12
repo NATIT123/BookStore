@@ -27,9 +27,11 @@ const UserInfo = (props) => {
   const [userAvatar, setUserAvatar] = useState(user?.avatar ?? "");
   const [isSubmit, setIsSubmit] = useState(false);
 
-  const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${
-    tempAvatar || user?.avatar
-  }`;
+  const urlAvatar = user?.avatar.startsWith("https")
+    ? user?.avatar
+    : `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${
+        tempAvatar || user?.avatar
+      }`;
 
   const handleUploadAvatar = async ({ file, onSuccess, onError }) => {
     const res = await callUpdateAvatar(file);

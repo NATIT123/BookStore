@@ -15,6 +15,7 @@ import { Request, Response } from 'express';
 import { IUser } from 'src/users/users.interface';
 import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -39,10 +40,48 @@ export class AuthController {
   }
 
   @Public()
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth() {}
+
+  @Public()
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(
+    @Req() req,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    // Google sends back the user after login
+    const data = await this.authService.login(req.user, response);
+    return response.redirect(
+      `http://localhost:3000/login-success?token=${data.access_token}`,
+    );
+  }
+
+  @Public()
+  @Get('facebook')
+  @UseGuards(AuthGuard('facebook'))
+  async facebookLogin(): Promise<any> {
+    // Redirect to Facebook
+  }
+
+  @Public()
+  @Get('facebook/callback')
+  @UseGuards(AuthGuard('facebook'))
+  async facebookCallback(
+    @Req() req,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<any> {
+    const data = await this.authService.login(req.user, response);
+    return response.redirect(
+      `http://localhost:3000/login-success?token=${data.access_token}`,
+    );
+  }
+
+  @Public()
   @ResponseMessage('Register a new user')
   @Post('/register')
   handleRegister(@Body() registerUserDto: RegisterUserDto) {
-    console.log(registerUserDto);
     return this.authService.register(registerUserDto);
   }
 

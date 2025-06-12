@@ -54,7 +54,11 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         permission.apiPath === targetEndPoint,
     );
 
-    if (targetEndPoint.startsWith('/api/v1/auth')) isExist = true;
+    if (
+      targetEndPoint.startsWith('/api/v1/auth') ||
+      targetEndPoint.startsWith('/api/v1/payment')
+    )
+      isExist = true;
     if (targetEndPoint === '/api/v1/getAllBanks') isExist = true;
     if (targetEndPoint === '/api/v1/order' && targetMethod == 'POST')
       isExist = true;
